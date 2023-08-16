@@ -1,9 +1,8 @@
 var express = require('express');
 const { getUserData } = require('../services/userService');
 const { addJob } = require('../services/jobService');
-const { createJob } = require('../utils/validators/userValidator');
-const { isSignIn, isNotSignIn, isClient, isOwner} = require('../controller/userControl');
-const passport = require('passport');
+const { createJob, createEmployee } = require('../utils/validators/userValidator');
+const { isSignIn, isNotSignIn, isClient, isOwner } = require('../controller/userControl');
 const csrf = require('csurf');
 var router = express.Router();
 
@@ -39,14 +38,15 @@ router.route('/addjob').get(isSignIn, isClient, (req, res, next) => {
   });
 }).post(createJob, addJob);
 
+//@desc GET & POST addemployee
 router.route('/addEmployee').get(isSignIn, isOwner, (req, res, next) => {
-  var messageError = req.flash('addJobError');
+  var messageError = req.flash('addEmployeeError');
   res.render('jobs/addemployee', {
     title: 'إضافة وظيفة',
     messages: messageError,
     token: req.csrfToken()
   });
-}).post(createJob, addJob);
+}).post(createEmployee, addJob);
 
 router.get('/profile', isSignIn, getUserData);
 

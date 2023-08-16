@@ -15,7 +15,7 @@ exports.createUserValidate = [
             req.body.slug = slugify(val);
             return true
         }),
-    check('phone')
+    check('email')
         .notEmpty()
         .withMessage('يحب ادخال  الالكتروني')
         .isEmail()
@@ -61,4 +61,10 @@ exports.createJob = [
         .notEmpty().withMessage('قم بإدخال عنوان الوظيفة'),
     check('description')
     .notEmpty().withMessage('قم بإدخال وصف الوظيفة'),
+]
+exports.createEmployee = [
+    check('title')
+        .notEmpty().withMessage('قم بإدخال عنوان المهنة'),
+    check('description')
+    .notEmpty().withMessage('قم بإدخال وصف المهنة'),
 ]

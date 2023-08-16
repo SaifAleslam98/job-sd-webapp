@@ -1,3 +1,4 @@
+const Jobs = require('../models/jobsModel');
 class apiFeatures {
     constructor(mongoQuery, queryString) {
         this.mongoQuery = mongoQuery;
@@ -18,9 +19,7 @@ class apiFeatures {
         if (this.queryString.sort) {
             const sortBy = this.queryString.sort.split(',').join(' ')
             this.mongoQuery = this.mongoQuery.sort(sortBy)
-        } else {
-            this.mongoQuery = this.mongoQuery.sort('-createdAt')
-        }
+        } 
         return this;
     }
 
@@ -37,29 +36,16 @@ class apiFeatures {
     search(modelName) {
         if (this.queryString.keyword) {
             let query = {};
-            if (modelName = 'Product') {
-                query.$or = [
-                    { title: { $regex: this.queryString.keyword, $options: 'i' } },
-                    { description: { $regex: this.queryString.keyword, $options: 'i' } }
-                ];
-                const Product = require('../models/productModel');
-                this.mongoQuery = Product.find(query)
-            }  if (modelName = 'Brand') {
-                query = { name: { $regex: this.queryString.keyword, $options: 'i' } }
-                const Brand = require('../models/brandModel');
-                this.mongoQuery = Brand.find(query)
-            }
-            if (modelName = 'Category') {
-                query = { name: { $regex: this.queryString.keyword, $options: 'i' } }
-                const Category = require('../models/categoryModel');
-                this.mongoQuery = Category.find(query)
-            }
-            if (modelName = 'SubCategory') {
-                query = { name: { $regex: this.queryString.keyword, $options: 'i' } }
-                const SubCategory = require('../models/subCategoryModel');
-                this.mongoQuery = SubCategory.find(query)
-            }
+
+            query.$or = [
+                { title: { $regex: this.queryString.keyword, $options: 'i' } },
+                { description: { $regex: this.queryString.keyword, $options: 'i' } }
+            ];
+           
+            this.mongoQuery = modelName.find(query)
+
         }
+
         return this;
     }
 

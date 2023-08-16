@@ -1,9 +1,11 @@
 const asyncHandler = require('express-async-handler');
 const AppError = require('../utils/appError');
 const User = require('../models/userModel');
-const Job = require('../models/jobsModel');
+const Jobs = require('../models/jobsModel');
 const ApiFeatures = require('../utils/feature');
 const { validationResult } = require('express-validator');
+
+exports.getOne
 
 exports.getAll = (Model, pageRender) => asyncHandler(async (req, res) => {
     let filter = {};
@@ -13,14 +15,17 @@ exports.getAll = (Model, pageRender) => asyncHandler(async (req, res) => {
     const documentCount = await Model.countDocuments();
     const apiFeature = new ApiFeatures(Model.find(filter).lean(), req.query)
         .filter()
-        .limitFeilds()
         .sorting()
         .search(Model)
         .paginate(documentCount);
 
     //Execute
     const { mongoQuery, paginationResult } = apiFeature;
-    document = await mongoQuery.populate('user', 'name phone city');
+     document = await mongoQuery.populate('user', 'name phone city');
+    for(var count = 0; count < document.length; count++) {
+        document[count].createdAt = (document[count].createdAt).toLocaleDateString()
+    } 
+    
     var owner = null
     async function checkOwner() {
         if (req.isAuthenticated()) {
@@ -33,11 +38,7 @@ exports.getAll = (Model, pageRender) => asyncHandler(async (req, res) => {
         }
     }
     checkOwner()
-    const dt = new Date();
-    console.log((dt - document[0].createdAt).toLocaleString())
-    for(var count = 0; count < document.length; count++) {
-        document[count].createdAt = (document[count].createdAt).toLocaleDateString()
-    }
+    
     res.render(pageRender.renderPage, {
         title: pageRender.title,
         checkuser: req.isAuthenticated(),

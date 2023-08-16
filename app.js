@@ -1,12 +1,14 @@
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
-var bodyParser = require('body-parser'); 
+var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const routesHandle = require('./routes/routerHandler');
 const dbConnection = require('./config/database');
-const expressHbs = require('express-handlebars');
+const expressHbs = require('express-handlebars'),
+  _handlebars = require('handlebars'),
+  { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access');
 const expressSession = require('express-session');
 const appError = require('./utils/appError');
 const globalError = require('./middlewares/errorMiddleware');
@@ -17,14 +19,14 @@ dbConnection();
 require('./config/passport');
 // view engine setup
 app.engine('.hbs', expressHbs.engine({
-  defaultLayout: 'layout', extname: '.hbs'
+  defaultLayout: 'layout', extname: '.hbs', handlebars: allowInsecurePrototypeAccess(_handlebars)
 }));
 app.set('view engine', '.hbs');
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(bodyParser.json()); 
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(expressSession({ secret: 'Dokank', saveUninitialized: false, resave: true }));
